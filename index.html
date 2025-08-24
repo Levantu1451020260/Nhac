@@ -175,7 +175,7 @@
     </div>
 
     <section class="meta">
-      <h2 class="title">Trót Yêu</h2>
+      <h2 class="title">Chăm Hoa</h2>
       <p class="artist">Cô bé Thùy An Đáng Yêu</p>
     </section>
 
@@ -228,13 +228,19 @@
       </button>
     </div>
     <div class="bottom-actions">
-      <div id="chipMsgText" style="display:none; margin-top:12px; color:var(--text); font-size:16px; background:var(--card); padding:14px 16px; border-radius:12px;">
+      <div id="chipMsgText" style="display:none; text-align:justify; margin-top:12px; color:var(--text); font-size:16px; background:var(--card); padding:14px 16px; border-radius:12px;">
       </div>
     </div>
     <script>
         document.getElementById('chipMsg').onclick = function() {
             const msg = document.getElementById('chipMsgText');
-            const text = "Em à, anh chỉ muốn nói rằng dù có chuyện gì xảy ra, anh vẫn luôn ở đây, yêu thương và quan tâm em. Mong em luôn vui vẻ và hạnh phúc nhé!";
+            const text = `Bé của anh à, tạo cái này với bài hát "Chăm Hoa" là a có một vài điều muốn gửi tới e!! 
+            <br>"Chăm": e có thể như hiểu là quan tâm. Đây là lần đầu tiên trong cuộc đời của a biết quan tâm và nhung nhớ về 1 ai đó. Mỗi ngày ngay từ trong những giấc mơ tới hiện thực a đều quan tâm duy nhất tới 1 hình ảnh đó là EM
+            <br>"Hoa": tất nhiên đó là e rồi. Một bông hoa vô cùng xinh đẹp của a, từ ngày có một bông hoa đẹp như e tới đã khiên cho cái chậu vừa đểu vừa cũ này trở nên đẹp hơn có sức sống hơn, e đã giúp cái chậu này thoát khỏi 1 chuỗi những vòng lặp vô vị nhàm chán 😁😁.
+            <br>Anh là một cái chậu nhưng nhiều lúc cũng biết buồn, biết dỗi hờn mà nhiều lúc a cũng hơi hâm hâm dở dở như điên ấy a mong e có thể bỏ qua cho a những lúc a như vậy.
+            <br>Anh yêu em nhiều lắm luôn á á á á. Ở bên a mãi e nhá đừng rời xa anh nha 🥰🥰🥰
+            <br>Em đọc mà văn của a mà có hơi lủng củng thì tha lỗi a nhá. Tại a không phải là chuyên văn để có thể viết những lời văn hoa mỹ vì thế tha lỗi cho a nhá
+            <br>💖 ANH YÊU EM 💖`;
             msg.innerHTML = "";
             msg.style.display = 'block';
             const words = text.split(' ');
@@ -254,7 +260,7 @@
   </main>
 
   <!-- Audio ẩn (đổi src của bạn) -->
-  <audio id="audio" preload="metadata" src="trotyeu.mp3"></audio>
+  <audio id="audio" preload="metadata" src="chamhoa.mp3"></audio>
 
 <script>
   const audio = document.getElementById('audio');
