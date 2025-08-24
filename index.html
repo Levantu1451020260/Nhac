@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Music Player – Heaven Violet</title>
+<style>
+  :root{
+    --bg:#0e4a8a;           /* xanh đậm nền */
+    --bg2:#0a3770;          /* xanh đậm hơn cho gradient */
+    --card:#ffffff10;       /* kính mờ nhạt */
+    --text:#eaf2ff;         /* chữ chính */
+    --text-dim:#b8c9e8;     /* chữ nhạt */
+    --accent:#ffffff;       /* trắng cho nút */
+    --accent-ghost:#ffffff30;
+    --line:#ffffff25;
+  }
+
+  /* RESET nhỏ gọn */
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+    radial-gradient(1200px 70% at 50% -10%, #fff 0%, #2196f3 40%, #ffb6c1 80%, transparent 100%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+  }
+
+  /* Thanh trạng thái/tiêu đề */
+  .statusbar{
+    height:44px;
+    display:flex;
+    align-items:center;
+    padding:0 16px;
+    gap:12px;
+  }
+  .statusbar .left-icon, .statusbar .menu{
+    width:26px;height:26px;border-radius:8px;
+    display:grid;place-items:center;
+    background:transparent;border:0;outline:none;color:var(--text);
+  }
+  .statusbar h1{
+    font-size:16px;font-weight:700;margin:0;
+    letter-spacing:.2px;flex:1;text-align:center;
+  }
+
+  /* Container chính (mobile-first 390–430px) */
+  .player{
+    max-width:430px;
+    margin:0 auto;
+    padding:8px 16px 24px;
+  }
+
+  /* Ảnh bìa (card) */
+  .cover{
+    margin-top:6px;
+    background:var(--card);
+    border-radius:16px;
+    padding:12px;
+    box-shadow: 0 20px 40px #00000030 inset, 0 8px 30px #0b2c561f;
+  }
+  .cover img{
+    width:100%;
+    aspect-ratio:1 / 1;
+    object-fit:cover;
+    border-radius:12px;
+    display:block;
+    background:#dfe7ff;
+  }
+
+  /* Tiêu đề bài hát */
+  .meta{
+    padding:18px 2px 6px;
+  }
+  .title{
+    font-size:28px; font-weight:800; letter-spacing:.2px;
+    margin:0 0 2px;
+  }
+  .artist{
+    margin:0;color:var(--text-dim);font-size:18px;font-weight:500;
+  }
+
+  /* Thanh tiến trình */
+  .progress{
+    position:relative;margin:18px 0 6px;
+    height:4px;background:var(--line);border-radius:999px;
+  }
+  .progress__fill{
+    position:absolute;left:0;top:0;height:100%;
+    width:0%;background:var(--accent);border-radius:999px;
+  }
+  .progress__knob{
+    position:absolute;top:50%;transform:translate(-50%,-50%);
+    width:14px;height:14px;border-radius:50%;
+    background:var(--accent);box-shadow:0 2px 8px #0006;left:0%;
+    transition:box-shadow .15s;
+  }
+  .time{
+    display:flex;justify-content:space-between;
+    color:var(--text-dim);font-variant-tabular-nums:tabular-nums;
+    font-size:13px;margin-bottom:6px;
+  }
+
+  /* Dãy nút điều khiển */
+  .controls{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;margin-top:10px;
+  }
+  .btn{
+    border:0;background:transparent;color:var(--accent);
+    width:48px;height:48px;border-radius:50%;
+    display:grid;place-items:center;cursor:pointer;
+  }
+  .btn--ghost{
+    background:transparent;color:var(--text);
+    opacity:.9;
+  }
+  .btn--primary{
+    width:88px;height:88px;border-radius:50%;
+    background:var(--accent);color:#0b2f5b;
+    box-shadow:0 12px 24px #07244740, inset 0 -6px 12px #d8e6ff;
+  }
+  .btn svg{width:26px;height:26px}
+  .btn--primary svg{width:36px;height:36px}
+
+  /* Hàng dưới cùng */
+  .bottom-actions{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:18px;
+  }
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-ghost);border:1px solid var(--line);
+    color:var(--text);padding:8px 12px;border-radius:999px;
+    font-size:14px
+  }
+
+  /* Safe areas (iPhone) */
+  .safe-bottom{height:calc(env(safe-area-inset-bottom));}
+
+  /* Responsive nhẹ */
+  @media (min-width: 431px){
+    .player{padding-bottom:40px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- Thanh trên cùng -->
+  <div class="statusbar">
+    <button class="left-icon" aria-label="Back" title="Back">
+      <!-- chevron -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Gửi Tới Người Con Gái A Yêu</h1>
+    <button class="menu" aria-label="More" title="More">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+    </button>
+  </div>
+
+  <!-- Khối player -->
+  <main class="player">
+    <div class="cover">
+      <img src="bean.jpg" alt="Heaven Violet – Piano Collection 2"/>
+    </div>
+
+    <section class="meta">
+      <h2 class="title">Trót Yêu</h2>
+      <p class="artist">Cô bé Thùy An Đáng Yêu</p>
+    </section>
+
+    <div class="progress" id="progress">
+      <div class="progress__fill" id="progressFill"></div>
+      <div class="progress__knob" id="progressKnob"></div>
+    </div>
+    <div class="time">
+      <span id="curTime">0:00</span>
+      <span id="durTime">-2:50</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn--ghost" id="enhance" title="Enhance">
+        <!-- sparkle -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4z"/><path d="M19 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/></svg>
+      </button>
+
+      <button class="btn btn--ghost" id="prev" title="Previous">
+        <!-- back -->
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 12L21 5v14L11 12z"></path><path d="M3 5h4v14H3z"></path></svg>
+      </button>
+
+      <button class="btn btn--primary" id="playToggle" title="Play/Pause">
+        <!-- pause (default) -->
+        <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>
+        <svg id="iconPlay" viewBox="0 0 24 24" fill="#0b2f5b" style="display:none"><path d="M6 4l14 8-14 8z"></path></svg>
+      </button>
+
+      <button class="btn btn--ghost" id="next" title="Next">
+        <!-- next -->
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 12L3 19V5l10 7z"></path><path d="M17 5h4v14h-4z"></path></svg>
+      </button>
+
+      <button class="btn btn--ghost" id="timer" title="Timer">
+        <!-- timer -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 3"/><path d="M10 2h4"/></svg>
+      </button>
+    </div>
+
+    <div class="bottom-actions">
+      <div class="chip" id="chipMsg" style="cursor:pointer">
+        <!-- device icon -->
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#ff69b4" stroke="#ff69b4" stroke-width="2"><path d="M12 21s-6.5-4.5-8.5-7.5A5.5 5.5 0 0 1 12 5a5.5 5.5 0 0 1 8.5 8.5C18.5 16.5 12 21 12 21z"/></svg>
+        Có đôi lời a muốn gửi tới em
+      </div>
+
+      <button class="btn btn--ghost" id="share" title="Share">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+      </button>
+    </div>
+    <div id="chipMsgText" style="display:none; margin-top:12px; color:var(--text); font-size:16px; background:var(--card); padding:14px 16px; border-radius:12px;">
+    </div>
+    <script>
+        document.getElementById('chipMsg').onclick = function() {
+            const msg = document.getElementById('chipMsgText');
+            const text = "Em à, anh chỉ muốn nói rằng dù có chuyện gì xảy ra, anh vẫn luôn ở đây, yêu thương và quan tâm em. Mong em luôn vui vẻ và hạnh phúc nhé!";
+            msg.innerHTML = "";
+            msg.style.display = 'block';
+            const words = text.split(' ');
+            let i = 0;
+            function showWord() {
+                if (i < words.length) {
+                    msg.innerHTML += (i > 0 ? ' ' : '') + words[i];
+                    i++;
+                    setTimeout(showWord, 120);
+                }
+            }
+            showWord();
+        };
+    </script>
+
+    <div class="safe-bottom"></div>
+  </main>
+
+  <!-- Audio ẩn (đổi src của bạn) -->
+  <audio id="audio" preload="metadata" src="trotyeu.mp3"></audio>
+
+<script>
+  const audio = document.getElementById('audio');
+  const playToggle = document.getElementById('playToggle');
+  const iconPause = document.getElementById('iconPause');
+  const iconPlay  = document.getElementById('iconPlay');
+  const curTime = document.getElementById('curTime');
+  const durTime = document.getElementById('durTime');
+  const bar = document.getElementById('progress');
+  const fill = document.getElementById('progressFill');
+  const knob = document.getElementById('progressKnob');
+
+  // Helper: chuyển giây -> m:ss
+  const fmt = (s)=>{
+    if(!isFinite(s)) return '0:00';
+    s = Math.max(0, Math.floor(s));
+    const m = Math.floor(s/60);
+    const ss = String(s%60).padStart(2,'0');
+    return `${m}:${ss}`;
+  };
+
+  // Cập nhật tiến trình UI
+  function updateProgress(){
+    const percent = (audio.currentTime / (audio.duration || 1)) * 100;
+    fill.style.width = percent + '%';
+    knob.style.left = percent + '%';
+    curTime.textContent = fmt(audio.currentTime);
+    const remain = (audio.duration||0) - audio.currentTime;
+    durTime.textContent = '-' + fmt(remain);
+  }
+
+  // Play / Pause
+  function setPlaying(isPlaying){
+    iconPause.style.display = isPlaying ? 'block' : 'none';
+    iconPlay.style.display  = isPlaying ? 'none' : 'block';
+  }
+
+  playToggle.addEventListener('click', ()=>{
+    if(audio.paused){ audio.play(); } else { audio.pause(); }
+  });
+
+  audio.addEventListener('play', ()=> setPlaying(true));
+  audio.addEventListener('pause', ()=> setPlaying(false));
+  audio.addEventListener('timeupdate', updateProgress);
+  audio.addEventListener('loadedmetadata', updateProgress);
+  audio.addEventListener('ended', ()=>{
+    audio.currentTime = 0; setPlaying(false); updateProgress();
+  });
+
+  // Kéo thả/nhấp để tua
+  function seekFromEvent(e){
+    const rect = bar.getBoundingClientRect();
+    const x = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
+    const p = x / rect.width;
+    audio.currentTime = p * (audio.duration || 0);
+  }
+  let dragging = false;
+
+  bar.addEventListener('pointerdown', (e)=>{ dragging = true; seekFromEvent(e); bar.setPointerCapture(e.pointerId); });
+  bar.addEventListener('pointermove', (e)=>{ if(dragging) seekFromEvent(e); });
+  bar.addEventListener('pointerup',   (e)=>{ dragging = false; bar.releasePointerCapture(e.pointerId); });
+  bar.addEventListener('pointercancel', ()=> dragging=false);
+
+  // Nút giả lập (prev/next/others)
+  document.getElementById('prev').onclick = ()=>{ audio.currentTime = Math.max(0, audio.currentTime-10); };
+  document.getElementById('next').onclick = ()=>{ audio.currentTime = Math.min(audio.duration||0, audio.currentTime+10); };
+  document.getElementById('timer').onclick = ()=> alert('Hẹn giờ:  Anh làm cho đẹp thôi!');
+  document.getElementById('share').onclick = ()=> navigator.share ? navigator.share({title:'Trót Yêu', text:'Bé An'}) : alert('Chia sẻ: Anh làm cho đẹp thôi!');
+  document.getElementById('enhance').onclick = ()=> alert('Nâng cấp âm thanh:  Anh làm cho đẹp thôi!');
+</script>
+</body>
+</html>
